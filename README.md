@@ -1,0 +1,2 @@
+# browze
+A ZooKeeper Browser
