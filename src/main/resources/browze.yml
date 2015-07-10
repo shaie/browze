@@ -1,0 +1,17 @@
+server:
+  rootPath: '/api/*'
+
+logging:
+  level: INFO
+  appenders:
+    - type: console
+      threshold: INFO
+      target: stdout
+      
+    - type: file
+      currentLogFilename: ./logs/browze.log
+      archivedLogFilenamePattern: ./logs/browze-%d.log.gz
+      archivedFileCount: 5
+      timeZone: UTC
+            
+zkHost: ${zkHost}
