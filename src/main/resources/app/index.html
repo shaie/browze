@@ -1,1 +1,80 @@
-<h1>HELLO</h1>
+<!DOCTYPE html>
+<html lang="en" ng-app="browzeApp" xmlns="http://www.w3.org/1999/html">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="ZooKeeper Browser">
+
+  <title>BrowZe</title>
+
+  <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="css/tree-control.css">
+  <link rel="stylesheet" type="text/css" href="css/browze.css">
+</head>
+
+<body ng-controller="BrowzeController">
+
+<nav class="navbar navbar-inverse navbar-fixed-top">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="#">Browze</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-3">
+      <!--<p style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">-->
+      <p style="display: none;">
+        <strong>Connected to:</strong> <samp style="word-break: break-word;">127.0.0.1:2181/chroot</samp>
+      </p>
+      <treecontrol class="tree-classic"
+                   tree-model="treedata"
+                   options="treeOptions"
+                   selected-node="selectedNode"
+                   expanded-nodes="expandedNodes"
+                   on-selection="showSelected(node, $parentNode, selected)"
+                   on-node-toggle="showToggle(node, expanded)">
+        {{node.label}}
+      </treecontrol>
+    </div>
+    <div class="col-md-9 main">
+      <div ng-show="errorMsg != null" class="alert alert-danger" role="alert">
+        <strong>{{errorMsg}}</strong>
+      </div>
+      <div ng-show="errorMsg == null">
+	      <div>
+	        <h3 class="selected-path">
+	          <span ng-repeat="node in selectedPath track by $index" ng-class="{active : $last}">
+	            <span ng-show="($first && !$last) || $middle"><a href="#{{selectedFullPath($index)}}">{{node | pathLabel}}</a> / </span>
+	            <span ng-show="($last && !$first) || ($last && $first && selectedPath.length == 1)">{{node | pathLabel}}</span>
+	          </span>
+	        </h3>
+	      </div>
+	
+	      <div>
+	        <h4><strong>Stat:</strong></h4>
+	        <pre>{{ selectedNodeStat | json}}</pre>
+	      </div>
+	
+	      <div style="margin-top: 20px;">
+	        <h4><strong>Data:</strong></h4>
+	        <pre>{{ selectedNodeData }}</pre>
+	      </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript" src="js/jquery-2.1.4.min.js"></script>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
+<script type="text/javascript" src="js/angular.min.js"></script>
+<script type="text/javascript" src="js/angular-resource.min.js"></script>
+<script type="text/javascript" src="js/angular-tree-control.js"></script>
+<script type="text/javascript" src="js/browze.js"></script>
+<script type="text/javascript" src="js/services.js"></script>
+
+</body>
+</html>

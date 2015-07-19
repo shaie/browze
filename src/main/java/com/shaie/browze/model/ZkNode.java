@@ -16,56 +16,61 @@
  */
 package com.shaie.browze.model;
 
-import java.util.List;
-
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.apache.zookeeper.data.Stat;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Charsets;
-import com.google.common.primitives.Ints;
 
 public class ZkNode {
 
-    private final Object data;
-    private final List<String> children;
+    @JsonProperty("tree")
+    private final Tree tree;
 
-    public ZkNode(byte[] data, List<String> children) {
+    @JsonProperty("data")
+    private final Object data;
+
+    @JsonProperty("stat")
+    private final Stat stat;
+
+    public ZkNode(Tree tree, byte[] data, Stat stat) {
+        this.tree = tree;
         this.data = resolveData(data);
-        this.children = children;
+        this.stat = stat;
     }
 
-    private Object resolveData(byte[] data) {
-        if (data == null || data.length == 0) {
-            return "";
-        }
-
-        if (data.length < 2) {
-            // data is a single byte
-            return data[0];
-        }
-
-        if (data.length <= 4) {
-            // data most likely an integer
-            return Ints.fromByteArray(data);
-        }
-
-        return new String(data, Charsets.UTF_8);
+    public Tree getTree() {
+        return tree;
     }
 
     public Object getData() {
         return data;
     }
 
-    public List<String> getChildren() {
-        return children;
+    public Stat getStat() {
+        return stat;
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
+                .append("treeInfo", tree)
                 .append("data", data)
-                .append("children", children)
+                .append("stat", stat)
                 .build();
+    }
+
+    private Object resolveData(byte[] data) {
+        if (data == null) {
+            return null;
+        }
+
+        if (data.length == 0) {
+            return "";
+        }
+
+        return new String(data, Charsets.UTF_8);
     }
 
 }

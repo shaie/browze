@@ -1,0 +1,77 @@
+{
+  "metadata": {
+    "leaf": false,
+    "label": "/",
+    "children": [
+      {
+        "leaf": false,
+        "label": "configs",
+        "children": [],
+        "parent": "/"
+      },
+      {
+        "leaf": false,
+        "label": "overseer",
+        "children": [],
+        "parent": "/"
+      },
+      {
+        "leaf": false,
+        "label": "overseer_elect",
+        "children": [],
+        "parent": "/"
+      },
+      {
+        "leaf": false,
+        "label": "watsonsolrsearch",
+        "children": [],
+        "parent": "/"
+      },
+      {
+        "leaf": false,
+        "label": "zookeeper",
+        "children": [],
+        "parent": "/"
+      },
+      {
+        "leaf": true,
+        "label": "aliases.json",
+        "children": [],
+        "parent": "/"
+      },
+      {
+        "leaf": true,
+        "label": "clusterstate.json",
+        "children": [],
+        "parent": "/"
+      },
+      {
+        "leaf": true,
+        "label": "collections",
+        "children": [],
+        "parent": "/"
+      },
+      {
+        "leaf": true,
+        "label": "live_nodes",
+        "children": [],
+        "parent": "/"
+      }
+    ],
+    "parent": null
+  },
+  "data": "",
+  "stat": {
+    "czxid": 0,
+    "mzxid": 0,
+    "ctime": 0,
+    "mtime": 0,
+    "version": 0,
+    "cversion": 7,
+    "aversion": 0,
+    "ephemeralOwner": 0,
+    "dataLength": 0,
+    "numChildren": 9,
+    "pzxid": 171
+  }
+}

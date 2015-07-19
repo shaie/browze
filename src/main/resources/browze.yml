@@ -10,7 +10,7 @@ logging:
       
     - type: file
       currentLogFilename: ./logs/browze.log
-      archivedLogFilenamePattern: ./logs/browze-%d.log.gz
+      archivedLogFilenamePattern: ./logs/browze-%d.log
       archivedFileCount: 5
       timeZone: UTC
             
