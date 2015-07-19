@@ -13,7 +13,7 @@
   <link rel="stylesheet" type="text/css" href="css/browze.css">
 </head>
 
-<body ng-controller="BrowzeController">
+<body ng-controller="BrowzeController" ng-init="init()">
 
 <nav class="navbar navbar-inverse navbar-fixed-top">
   <div class="container-fluid">
@@ -23,22 +23,36 @@
   </div>
 </nav>
 
-<div class="container-fluid">
+<div class="container-fluid"">
   <div class="row">
-    <div class="col-md-3">
-      <!--<p style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">-->
-      <p style="display: none;">
-        <strong>Connected to:</strong> <samp style="word-break: break-word;">127.0.0.1:2181/chroot</samp>
-      </p>
-      <treecontrol class="tree-classic"
-                   tree-model="treedata"
-                   options="treeOptions"
-                   selected-node="selectedNode"
-                   expanded-nodes="expandedNodes"
-                   on-selection="showSelected(node, $parentNode, selected)"
-                   on-node-toggle="showToggle(node, expanded)">
-        {{node.label}}
-      </treecontrol>
+    <div class="col-md-12">
+      <form ng-submit="connect()" ng-show="!connected">
+        <strong>Connect to:&nbsp;</strong>
+        <input type="text" placeholder="ZooKeeper connection string" ng-model="connectString" required style="width: 30%;"></input>
+        <input type="submit" id="submit" value="Connect"></input>
+      </form>
+			<h4 ng-show="connected">
+				<strong>Connected to:&nbsp;</strong><samp>{{connectString}}</samp>
+			</h4>
+		</div>
+  </div>
+  <div class="row" ng-show="connected">
+    <div class="col-md-3" style="height: 900px; overflow: auto;">
+       <div class="table-responsive">
+        <table class="table">
+          <tr><td style="border: 0px solid;">
+			      <treecontrol class="tree-classic"
+			                   tree-model="treedata"
+			                   options="treeOptions"
+			                   selected-node="selectedNode"
+			                   expanded-nodes="expandedNodes"
+			                   on-selection="showSelected(node, $parentNode, selected)"
+			                   on-node-toggle="showToggle(node, expanded)">
+			        {{node.label}}
+			      </treecontrol>
+          </td></tr>
+        </table>
+      </div>
     </div>
     <div class="col-md-9 main">
       <div ng-show="errorMsg != null" class="alert alert-danger" role="alert">

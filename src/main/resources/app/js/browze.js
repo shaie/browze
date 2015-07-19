@@ -93,15 +93,25 @@
     $scope.errorMsg = null;
 
     /* Register a listener for browser's path changes. */
-    $scope.$on("$locationChangeSuccess", function (event, newUrl) {
-      if ($location.path().length == 0) {
-        $location.path('/');
-        event.preventDefault();
+    $scope.$on("$locationChangeSuccess", function (event) {
+      if (!$scope.connected) {
         return;
       }
-      
+
+      getTreeData(event);
+    });
+
+    var getTreeData = function (event) {
+      if ($location.path().length == 0) {
+        $location.path('/');
+        if (event) {
+          event.preventDefault();
+        }
+        return;
+      }
+
       var path = $location.path(normalizeUrl($location.path())).path();
-      
+
       // Remove all sub-nodes that are expanded.
       removeSubExpandedNodes(path);
       
@@ -131,8 +141,7 @@
       }, function (error) {
         $scope.errorMsg = error.data;
       });
-      
-    });
+    };
 
     var isFullHierarchyExists = function (path){
       if ($scope.treedata.length == 0) {
@@ -243,6 +252,29 @@
     $scope.selectedFullPath = function (nodeIdx) {
       return "/" + $scope.selectedPath.slice(1, nodeIdx + 1).join('/');
     };
+
+    $scope.init = function () {
+      Browze.status({}, function (success) {
+        $scope.connectString = success.connectString;
+        $scope.connected = $scope.connectString;
+        if ($scope.connected) {
+          getTreeData();
+        }
+      }, function (error) {
+        $scope.connected = false;
+        $scope.errorMsg = error.data;
+      });
+    };
+
+    $scope.connect = function () {
+      Browze.connect({ connectString: $scope.connectString}, function (success) {
+        $scope.connected = true;
+        getTreeData();
+      }, function (error) {
+        $scope.connected = false;
+        $scope.errorMsg = error.data;
+      });
+    }
 
   }]);
 })();

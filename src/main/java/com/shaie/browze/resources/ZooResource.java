@@ -16,8 +16,6 @@
  */
 package com.shaie.browze.resources;
 
-import static com.google.common.base.Preconditions.*;
-
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
@@ -45,9 +43,11 @@ import org.slf4j.LoggerFactory;
 
 import com.codahale.metrics.annotation.Timed;
 import com.google.common.base.Function;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.shaie.browze.model.Tree;
 import com.shaie.browze.model.ZkNode;
+import com.shaie.browze.model.ZooStatus;
 
 import jersey.repackaged.com.google.common.collect.ImmutableList;
 
@@ -57,35 +57,44 @@ public class ZooResource {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ZooResource.class);
 
-    private final CuratorFramework curatorFramework;
+    private CuratorFramework curatorFramework;
 
-    public ZooResource(String zkHost) {
-        checkNotNull(zkHost);
-
-        LOGGER.info("Connecting to zkHost [{}]", zkHost);
-        this.curatorFramework = CuratorFrameworkFactory.builder()
-                .connectString(zkHost)
-                .connectionTimeoutMs(30000)
-                .retryPolicy(new ExponentialBackoffRetry(1000, 3))
-                .build();
-        curatorFramework.start();
-        try {
-            LOGGER.info("Blocking until connection with ZooKeeper is established");
-            if (!curatorFramework.blockUntilConnected(10, TimeUnit.SECONDS)) {
-                throw new IllegalStateException(String.format(Locale.ROOT,
-                        "Failed to establish connection with ZooKeeper at [%s] for 10 seconds", zkHost));
-            }
-            LOGGER.info("Started CuratorFramework");
-        } catch (final InterruptedException e) {
-            throw new IllegalStateException("Interrupted while waiting for connection with ZooKeeper", e);
-        }
-    }
-
-    @Path("/{path:.*}")
+    @Path("status")
     @GET
     @Timed
-    public Response getNodeData(@PathParam("path") final String path,
+    public Response status() {
+        final ZooStatus status;
+        if (curatorFramework != null) {
+            status = new ZooStatus(curatorFramework.getZookeeperClient().getCurrentConnectionString());
+        } else {
+            status = new ZooStatus(null);
+        }
+
+        return Response.ok().entity(status).build();
+    }
+
+    @Path("connect/{connectString}")
+    @GET
+    @Timed
+    public Response connect(@PathParam("connectString") final String connectString) {
+        if (curatorFramework != null) {
+            disconnectFromZk();
+        }
+
+        connectToZk(connectString);
+        return Response.ok()
+                .entity(ImmutableMap.of("msg", "Successfully connected to ZooKeeper at " + connectString))
+                .build();
+    }
+
+    @Path("browse/{path:.*}")
+    @GET
+    @Timed
+    public Response browse(@PathParam("path") final String path,
             @DefaultValue("false") @QueryParam("full_hierarchy") boolean fullHierarchy) throws Exception {
+        if (curatorFramework == null) {
+            throw new IllegalStateException("Must first /connect to ZK!");
+        }
         final String zkPath = "/" + StringUtils.strip(path, "/");
         try {
             final Stat stat = new Stat();
@@ -164,6 +173,35 @@ public class ZooResource {
                 }
             }
         });
+    }
+
+    private void connectToZk(String connectString) {
+        LOGGER.info("Connecting to ZooKeeper at [{}]", connectString);
+        this.curatorFramework = CuratorFrameworkFactory.builder()
+                .connectString(connectString)
+                .connectionTimeoutMs(30000)
+                .retryPolicy(new ExponentialBackoffRetry(1000, 3))
+                .build();
+        curatorFramework.start();
+        try {
+            LOGGER.info("Blocking until connection with ZooKeeper is established");
+            if (!curatorFramework.blockUntilConnected(10, TimeUnit.SECONDS)) {
+                throw new IllegalStateException(String.format(Locale.ROOT,
+                        "Failed to establish connection with ZooKeeper at [%s] for 10 seconds", connectString));
+            }
+            LOGGER.info("Started CuratorFramework");
+        } catch (final InterruptedException e) {
+            throw new IllegalStateException("Interrupted while waiting for connection with ZooKeeper", e);
+        }
+    }
+
+    private void disconnectFromZk() {
+        if (curatorFramework != null) {
+            LOGGER.info("Disconnecting from ZooKeeper at [{}]",
+                    curatorFramework.getZookeeperClient().getCurrentConnectionString());
+            curatorFramework.close();
+            curatorFramework = null;
+        }
     }
 
 }

@@ -5,6 +5,10 @@
 
   browzeServices.factory('Browze', ['$resource',
     function ($resource) {
-      return $resource('api/zoo/:path', {}, {});
+      return $resource('api/zoo/browse/:path', {}, {
+        'connect' : { method: 'GET', url: 'api/zoo/connect/:connectString' },
+        'status' : { method: 'GET', url: 'api/zoo/status' }
+      });
     }]);
+
 })();

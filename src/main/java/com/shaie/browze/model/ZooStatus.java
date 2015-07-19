@@ -14,12 +14,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.shaie.browze;
+package com.shaie.browze.model;
 
-import io.dropwizard.Configuration;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
-public class BrowzeConfiguration extends Configuration {
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-    // Currently empty
+public class ZooStatus {
+
+    @JsonProperty("connectString")
+    private final String connectString;
+
+    public ZooStatus(String connectString) {
+        this.connectString = connectString;
+    }
+
+    public String getConnectString() {
+        return connectString;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
+                .append("connectString", connectString)
+                .build();
+    }
 
 }

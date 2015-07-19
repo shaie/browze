@@ -44,7 +44,7 @@ public class BrowzeApplication extends Application<BrowzeConfiguration> {
 
     @Override
     public void run(BrowzeConfiguration configuration, Environment environment) {
-        final ZooResource resource = new ZooResource(configuration.getZkHost());
+        final ZooResource resource = new ZooResource();
         environment.jersey().register(resource);
 
         final BrowzeHealthCheck healthCheck = new BrowzeHealthCheck();
