@@ -91,6 +91,9 @@
     $scope.selectedNodeData = null;
     $scope.selectedNodeStat = null;
     $scope.errorMsg = null;
+    $scope.connected = false;
+    $scope.connectString = null;
+    $scope.connectStringEdit = false;
 
     /* Register a listener for browser's path changes. */
     $scope.$on("$locationChangeSuccess", function (event) {
@@ -269,12 +272,26 @@
     $scope.connect = function () {
       Browze.connect({ connectString: $scope.connectString}, function (success) {
         $scope.connected = true;
+        $scope.connectStringEdit = false;
+        $scope.curConnectString = $scope.connectString;
         getTreeData();
       }, function (error) {
         $scope.connected = false;
         $scope.errorMsg = error.data;
       });
-    }
+    };
+
+    $scope.connectStringKeyDown = function (event) {
+      if (event.keyCode == 27) { // 'ESC'
+        $scope.connectStringEdit = false;
+        $scope.connectString = $scope.curConnectString;
+      }
+    };
+
+    $scope.editConnectString = function () {
+      $scope.curConnectString = $scope.connectString;
+      $scope.connectStringEdit = true;
+    };
 
   }]);
 })();
