@@ -123,7 +123,7 @@
       $scope.browsing = true;
       Browze.get({path : path, full_hierarchy : !fullHierarchyExists}, function (success) {
         if (!fullHierarchyExists) {
-          $scope.treedata[0] = success.tree;
+          $scope.treedata = [success.tree];
           removeRootFromExpandedNodes();
         }
         
