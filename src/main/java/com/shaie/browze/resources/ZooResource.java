@@ -166,7 +166,7 @@ public class ZooResource {
             public Tree apply(String input) {
                 try {
                     final Stat childStat = curatorFramework.checkExists().forPath(ZKPaths.makePath(zkPath, input));
-                    return new Tree(new PathAndNode(zkPath, input), ImmutableList.of(), childStat);
+                    return new Tree(new PathAndNode(zkPath, input), ImmutableList.<Tree> of(), childStat);
                 } catch (final Exception e) {
                     // not expected
                     throw new RuntimeException(e);

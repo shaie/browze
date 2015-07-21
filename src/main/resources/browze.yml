@@ -13,5 +13,3 @@ logging:
       archivedLogFilenamePattern: ./logs/browze-%d.log
       archivedFileCount: 5
       timeZone: UTC
-            
-zkHost: ${zkHost}

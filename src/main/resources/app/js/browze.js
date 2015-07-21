@@ -91,9 +91,9 @@
     $scope.selectedNodeData = null;
     $scope.selectedNodeStat = null;
     $scope.errorMsg = null;
-    $scope.connected = false;
     $scope.connectString = null;
     $scope.connectStringEdit = false;
+    $scope.connecting = false;
 
     /* Register a listener for browser's path changes. */
     $scope.$on("$locationChangeSuccess", function (event) {
@@ -101,10 +101,10 @@
         return;
       }
 
-      getTreeData(event);
+      browseTree(event);
     });
 
-    var getTreeData = function (event) {
+    var browseTree = function (event) {
       if ($location.path().length == 0) {
         $location.path('/');
         if (event) {
@@ -120,6 +120,7 @@
       
       var fullHierarchyExists = path == '/' ? false : isFullHierarchyExists(path);
       
+      $scope.browsing = true;
       Browze.get({path : path, full_hierarchy : !fullHierarchyExists}, function (success) {
         if (!fullHierarchyExists) {
           $scope.treedata[0] = success.tree;
@@ -141,7 +142,9 @@
         $scope.selectedNodeStat = success.stat;
         expandAllNodesOnPath(treeNode.leaf ? treeNode.parent : path);
         $scope.errorMsg = null;
+        $scope.browsing = false;
       }, function (error) {
+        $scope.browsing = false;
         $scope.errorMsg = error.data;
       });
     };
@@ -259,9 +262,9 @@
     $scope.init = function () {
       Browze.status({}, function (success) {
         $scope.connectString = success.connectString;
-        $scope.connected = $scope.connectString;
+        $scope.connected = $scope.connectString != null && $scope.connectString.length > 0;
         if ($scope.connected) {
-          getTreeData();
+          browseTree();
         }
       }, function (error) {
         $scope.connected = false;
@@ -270,13 +273,22 @@
     };
 
     $scope.connect = function () {
-      Browze.connect({ connectString: $scope.connectString}, function (success) {
-        $scope.connected = true;
+      $scope.connecting = true;
+      $scope.connected = false;
+      Browze.connect({ connectString: $scope.connectString }, function (success) {
         $scope.connectStringEdit = false;
         $scope.curConnectString = $scope.connectString;
-        getTreeData();
+        $scope.connected = $scope.connectString != null && $scope.connectString.length > 0;
+        $scope.connecting = false;
+        $scope.treedata = [];
+        if ($location.path() != '/') {
+          $location.path("/");
+        } else {
+          browseTree();
+        }
       }, function (error) {
         $scope.connected = false;
+        $scope.connecting = false;
         $scope.errorMsg = error.data;
       });
     };
