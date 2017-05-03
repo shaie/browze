@@ -239,7 +239,7 @@
       $scope.selectedPath = split;
     };
     
-    $scope.showSelected = function (node, $parentNode, selected) {
+    $scope.showSelected = function (node, selected) {
       if (selected) {
         $location.path(getFullPath(node));
         $scope.selectedNode = node;

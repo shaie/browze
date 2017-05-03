@@ -23,7 +23,7 @@
   </div>
 </nav>
 
-<div class="container-fluid"">
+<div class="container-fluid">
   <div class="row">
     <div class="col-md-12">
       <div ng-show="connecting" class="alert alert-warning" role="alert">
@@ -33,8 +33,8 @@
         <strong>Connect to:&nbsp;</strong>
         <input id="zkConnectString" type="text" placeholder="ZooKeeper connection string"
                ng-model="connectString" required style="width: 20%;"
-               ng-keydown="connectStringKeyDown($event)"></input>
-        <input type="submit" id="submit" value="Connect"></input>
+               ng-keydown="connectStringKeyDown($event)">
+        <input type="submit" id="submit" value="Connect">
       </form>
       <div ng-show="connected && !connectStringEdit" class="alert alert-success" role="alert">
         <strong>Connected to:&nbsp;</strong><samp>{{connectString}}</samp>&nbsp;
@@ -57,7 +57,7 @@
 			                   options="treeOptions"
 			                   selected-node="selectedNode"
 			                   expanded-nodes="expandedNodes"
-			                   on-selection="showSelected(node, $parentNode, selected)"
+			                   on-selection="showSelected(node, selected)"
 			                   on-node-toggle="showToggle(node, expanded)">
 			        {{node.label}}
 			      </treecontrol>

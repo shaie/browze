@@ -61,7 +61,7 @@ public class ZkNode {
                 .build();
     }
 
-    private Object resolveData(byte[] data) {
+    private static Object resolveData(byte[] data) {
         if (data == null) {
             return null;
         }

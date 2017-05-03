@@ -137,15 +137,6 @@ public class ZooResource {
         }
     }
 
-    private String extractLabel(String path) {
-        int idx = path.indexOf('/');
-        if (idx == -1) {
-            idx = path.length();
-        }
-        final String label = path.substring(0, idx);
-        return label.isEmpty() ? "/" : label;
-    }
-
     private Tree getRootNode() throws Exception {
         final Stat stat = curatorFramework.checkExists().forPath("/");
         if (stat == null) {
@@ -202,6 +193,15 @@ public class ZooResource {
             curatorFramework.close();
             curatorFramework = null;
         }
+    }
+
+    private static String extractLabel(String path) {
+        int idx = path.indexOf('/');
+        if (idx == -1) {
+            idx = path.length();
+        }
+        final String label = path.substring(0, idx);
+        return label.isEmpty() ? "/" : label;
     }
 
 }
